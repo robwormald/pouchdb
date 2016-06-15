@@ -6,18 +6,21 @@ if (!process.env.LEVEL_ADAPTER &&
   // these tests don't make sense for anything other than default leveldown
   var fs = require('fs');
   var ncp = require('ncp').ncp;
+  var path = require('path');
+  var resolve = path.resolve.bind(path);
 
   ncp.limit = 16;
 
   describe('migration one', function () {
     beforeEach(function (done) {
-      var input =
-        fs.createReadStream('./tests/integration/leveldb/oldStyle.uuid');
+      var input = fs.createReadStream(resolve(
+          './tests/integration/leveldb/oldStyle.uuid'));
       input.on('end', function () {
-        ncp('./tests/integration/leveldb/oldStyle',
-            './tmp/_pouch_oldStyle', done);
+        ncp(resolve('./tests/integration/leveldb/oldStyle'),
+            resolve('./tmp/_pouch_oldStyle'), done);
       });
-      input.pipe(fs.createWriteStream('./tmp/_pouch_oldStyle.uuid'));
+      input.pipe(fs.createWriteStream(resolve(
+        './tmp/_pouch_oldStyle.uuid')));
     });
     it('should work', function () {
       return new PouchDB('oldStyle').then(function (db) {
@@ -30,8 +33,8 @@ if (!process.env.LEVEL_ADAPTER &&
   });
   describe('migration two', function () {
     beforeEach(function (done) {
-      ncp('./tests/integration/leveldb/middleStyle',
-          './tmp/_pouch_middleStyle', done);
+      ncp(resolve('./tests/integration/leveldb/middleStyle'),
+          resolve('./tmp/_pouch_middleStyle'), done);
     });
     it('should work', function () {
       return new PouchDB('middleStyle').then(function (db) {
@@ -54,8 +57,8 @@ if (!process.env.LEVEL_ADAPTER &&
   // attachments for #2818
   describe('#2818 no migration needed for attachments', function () {
     beforeEach(function (done) {
-      ncp('./tests/integration/leveldb/lateStyle',
-          './tmp/_pouch_lateStyle', done);
+      ncp(resolve('./tests/integration/leveldb/lateStyle'),
+          resolve('./tmp/_pouch_lateStyle'), done);
     });
     it('should work', function () {
       return new PouchDB('lateStyle', {
@@ -100,8 +103,8 @@ if (!process.env.LEVEL_ADAPTER &&
 
   describe('#3136 no migration needed for overwritten revs', function () {
     beforeEach(function (done) {
-      ncp('./tests/integration/leveldb/laterStyle',
-        './tmp/_pouch_laterStyle', done);
+      ncp(resolve('./tests/integration/leveldb/laterStyle'),
+        resolve('./tmp/_pouch_laterStyle'), done);
     });
     it('should work', function () {
       var db = new PouchDB('laterStyle');

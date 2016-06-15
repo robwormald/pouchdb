@@ -2,6 +2,7 @@
 /* jshint -W079 */
 'use strict';
 
+var path = require('path');
 var testUtils = {};
 
 function uniq(list) {
@@ -355,12 +356,14 @@ if (typeof process !== 'undefined' && !process.browser) {
     // in Node 0.11-0.12)
     require('../../packages/' + 'pouchdb/extras/websql');
     global.PouchDB = global.PouchDB.defaults({
-      prefix: './tmp/_pouch_'
+      prefix: path.resolve('./tmp/_pouch_')
     });
     delete global.PouchDB.adapters.leveldb;
   } else {
     // test regular leveldown in node
-    global.PouchDB = global.PouchDB.defaults({prefix: './tmp/_pouch_'});
+    global.PouchDB = global.PouchDB.defaults({
+      prefix: path.resolve('./tmp/_pouch_')
+    });
   }
 
   require('mkdirp').sync('./tmp');
